@@ -39,6 +39,11 @@ def recommend(movie):
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
 
+# Print information about movies DataFrame
+print(f"Movies DataFrame shape: {movies.shape}")
+print(f"Movies columns: {movies.columns}")
+print(f"Sample of movies: {movies.head()}")
+
 # Check if similarity.pkl exists or download it
 if not os.path.exists("similarity.pkl"):
     url = "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/main/pythonProject/similarity.pkl"
@@ -56,6 +61,8 @@ try:
     with open("similarity.pkl", "rb") as f:
         similarity = pickle.load(f)
     print("Similarity matrix loaded successfully")
+    print(f"Similarity matrix type: {type(similarity)}")
+    print(f"Similarity matrix shape: {getattr(similarity, 'shape', 'No shape attribute')}")
 except Exception as e:
     print(f"Error loading similarity.pkl: {e}")
     similarity = None

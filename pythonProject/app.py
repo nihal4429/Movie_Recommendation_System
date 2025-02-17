@@ -12,17 +12,25 @@ def fetch_poster(movie_id):
 
 def recommend(movie):
     try:
+        print(f"Finding recommendation for movie: {movie}")
         movie_index = movies[movies['title'] == movie].index[0]
-        distances = similarity[movie_index]  # Now similarity should be loaded
-        movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+        print(f"Movie index: {movie_index}")
 
-        recommended_movies = []
-        recommended_movies_poster = []
-        for i in movies_list:
-            movie_id = movies.iloc[i[0]].movie_id
-            recommended_movies.append(movies.iloc[i[0]].title)
-            recommended_movies_poster.append(fetch_poster(movie_id))
-        return recommended_movies, recommended_movies_poster
+        if similarity is not None:
+            distances = similarity[movie_index]  # Now similarity should be loaded
+            print(f"Similarity for movie {movie}: {distances}")
+
+            movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+            recommended_movies = []
+            recommended_movies_poster = []
+            for i in movies_list:
+                movie_id = movies.iloc[i[0]].movie_id
+                recommended_movies.append(movies.iloc[i[0]].title)
+                recommended_movies_poster.append(fetch_poster(movie_id))
+            return recommended_movies, recommended_movies_poster
+        else:
+            print("Similarity matrix is not loaded.")
+            return [], []
     except Exception as e:
         print(f"Error in recommendation function: {e}")
         return [], []
@@ -50,6 +58,7 @@ try:
     print("Similarity matrix loaded successfully")
 except Exception as e:
     print(f"Error loading similarity.pkl: {e}")
+    similarity = None
 
 # Streamlit app
 st.title('Movie Recommendation System')

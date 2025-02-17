@@ -12,25 +12,22 @@ def fetch_poster(movie_id):
 
 def recommend(movie):
     try:
-        print(f"Finding recommendation for movie: {movie}")
+        # Ensure that the movie exists in the dataframe
+        if movie not in movies['title'].values:
+            raise ValueError(f"Movie '{movie}' not found in the movie dataset.")
+        
         movie_index = movies[movies['title'] == movie].index[0]
-        print(f"Movie index: {movie_index}")
+        distances = similarity[movie_index]
+        movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+        
+        recommended_movies = []
+        recommended_movies_poster = []
+        for i in movies_list:
+            movie_id = movies.iloc[i[0]].movie_id
+            recommended_movies.append(movies.iloc[i[0]].title)
+            recommended_movies_poster.append(fetch_poster(movie_id))
+        return recommended_movies, recommended_movies_poster
 
-        if similarity is not None:
-            distances = similarity[movie_index]  # Now similarity should be loaded
-            print(f"Similarity for movie {movie}: {distances}")
-
-            movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
-            recommended_movies = []
-            recommended_movies_poster = []
-            for i in movies_list:
-                movie_id = movies.iloc[i[0]].movie_id
-                recommended_movies.append(movies.iloc[i[0]].title)
-                recommended_movies_poster.append(fetch_poster(movie_id))
-            return recommended_movies, recommended_movies_poster
-        else:
-            print("Similarity matrix is not loaded.")
-            return [], []
     except Exception as e:
         print(f"Error in recommendation function: {e}")
         return [], []
@@ -44,7 +41,7 @@ print(f"Movies DataFrame shape: {movies.shape}")
 print(f"Movies columns: {movies.columns}")
 print(f"Sample of movies: {movies.head()}")
 
-# Check if similarity.pkl exists or download it
+# Ensure similarity.pkl exists or download it
 if not os.path.exists("similarity.pkl"):
     url = "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/main/pythonProject/similarity.pkl"
     destination_path = "similarity.pkl"

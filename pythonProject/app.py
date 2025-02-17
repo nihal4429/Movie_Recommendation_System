@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pickle
 import pandas as pd
@@ -27,8 +28,18 @@ def recommend(movie):
 
 movies_dict = pickle.load(open('movie_dict.pkl','rb'))
 movies = pd.DataFrame(movies_dict)
+import urllib.request
 
-similarity = pickle.load(open('similarity.pkl','rb'))
+if not os.path.exists("similarity.pkl"):
+    urllib.request.urlretrieve(
+        "https://raw.githubusercontent.com/your-username/movie-recommendation/main/similarity.pkl",
+        "similarity.pkl"
+    )
+
+# Load the file after downloading
+with open("similarity.pkl", "rb") as f:
+    similarity = pickle.load(f)
+
 
 st.title('Movie Recommendation System')
 

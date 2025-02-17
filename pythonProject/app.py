@@ -17,7 +17,11 @@ def recommend(movie):
             raise ValueError(f"Movie '{movie}' not found in the movie dataset.")
         
         movie_index = movies[movies['title'] == movie].index[0]
+        print(f"Movie index: {movie_index}")  # Debugging line
+
         distances = similarity[movie_index]
+        print(f"Distances: {distances}")  # Debugging line
+
         movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
         
         recommended_movies = []
@@ -33,13 +37,13 @@ def recommend(movie):
         return [], []
 
 # Load movie data
-movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
-movies = pd.DataFrame(movies_dict)
-
-# Print information about movies DataFrame
-print(f"Movies DataFrame shape: {movies.shape}")
-print(f"Movies columns: {movies.columns}")
-print(f"Sample of movies: {movies.head()}")
+try:
+    movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
+    movies = pd.DataFrame(movies_dict)
+    print(f"Movies DataFrame loaded successfully. Shape: {movies.shape}")
+except Exception as e:
+    print(f"Error loading movies data: {e}")
+    movies = None
 
 # Ensure similarity.pkl exists or download it
 if not os.path.exists("similarity.pkl"):
@@ -59,7 +63,10 @@ try:
         similarity = pickle.load(f)
     print("Similarity matrix loaded successfully")
     print(f"Similarity matrix type: {type(similarity)}")
-    print(f"Similarity matrix shape: {getattr(similarity, 'shape', 'No shape attribute')}")
+    if hasattr(similarity, 'shape'):
+        print(f"Similarity matrix shape: {similarity.shape}")
+    else:
+        print("Similarity matrix has no 'shape' attribute")
 except Exception as e:
     print(f"Error loading similarity.pkl: {e}")
     similarity = None
@@ -73,7 +80,7 @@ if st.button('Recommend'):
     names, posters = recommend(selected_movie_name)
 
     if not names:
-        st.error("An error occurred while fetching recommendations.")
+        st.error("An error occurred while fetching recommendations. Check the logs for more details.")
     else:
         col1, col2, col3, col4, col5 = st.columns(5)
         with col1:

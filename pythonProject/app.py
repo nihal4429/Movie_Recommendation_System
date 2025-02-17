@@ -32,7 +32,7 @@ import urllib.request
 
 if not os.path.exists("similarity.pkl"):
     urllib.request.urlretrieve(
-        "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/blob/main/pythonProject/similarity.pkl",
+        "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/main/pythonProject/similarity.pkl",
         "similarity.pkl"
     )
 

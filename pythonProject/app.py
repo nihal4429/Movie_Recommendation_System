@@ -30,15 +30,21 @@ movies_dict = pickle.load(open('movie_dict.pkl','rb'))
 movies = pd.DataFrame(movies_dict)
 import urllib.request
 
-if not os.path.exists("similarity.pkl"):
-    urllib.request.urlretrieve(
-        "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/main/pythonProject/similarity.pkl",
-        "similarity.pkl"
-    )
+# if not os.path.exists("similarity.pkl"):
+#     urllib.request.urlretrieve(
+#         "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/main/pythonProject/similarity.pkl",
+#         "similarity.pkl"
+#     )
 
-# Load the file after downloading
-with open("similarity.pkl", "rb") as f:
-    similarity = pickle.load(f)
+url = "https://raw.githubusercontent.com/nihal4429/Movie_Recommendation_System/main/pythonProject/similarity.pkl"
+destination_path = "similarity.pkl"
+
+try:
+    urllib.request.urlretrieve(url, destination_path)
+    print("Download successful")
+except Exception as e:
+    print(f"Error downloading file: {e}")
+
 
 
 st.title('Movie Recommendation System')
